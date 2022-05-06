@@ -1,27 +1,10 @@
 require('dotenv').config();
+const cron = require('node-cron');
 const logger = require('./components/utils/logger');
+const telegram = require('./scripts/telegram');
 
-const { parse, translate } = require('./components/articles/article');
-const { publish: publishTelegraph } = require('./components/publishers/telegraph');
-const { publish: publishTelegram } = require('./components/publishers/telegram');
-const { set: saveDate } = require('./components/utils/date');
-
-const run = async () => {
-  const articles = await parse.getUpdates();
-
-  for (let i = 0; i < articles.length; i++) {
-    const article = await translate(articles[i]);
-
-    if (article.title) {
-      article.url = (await publishTelegraph(article)).url;
-    }
-
-    await publishTelegram(article);
-
-    saveDate(new Date(article.datePublished));
-  }
-};
-
-run().catch((e) => {
-  logger.error(e);
+cron.schedule('*/5 * * * *', () => {
+  telegram().catch((e) => {
+    logger.error(e);
+  });
 });
