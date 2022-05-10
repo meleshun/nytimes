@@ -1,20 +1,8 @@
-const cron = require('node-cron');
+// eslint-disable-next-line import/no-extraneous-dependencies, global-require
+if (process.env.NODE_ENV !== 'production') require('dotenv').config();
 const logger = require('./components/utils/logger');
 const telegram = require('./scripts/telegram');
 
-if (process.env.NODE_ENV !== 'production') {
-  // eslint-disable-next-line import/no-extraneous-dependencies, global-require
-  require('dotenv').config();
-}
-
-if (process.env.NODE_ENV === 'production') {
-  cron.schedule(`*/${process.env.UPDATE_FREQUENCY} * * * *`, () => {
-    telegram().catch((e) => {
-      logger.error(e);
-    });
-  });
-} else {
-  telegram().catch((e) => {
-    logger.error(e);
-  });
-}
+telegram().catch((e) => {
+  logger.error(e);
+});

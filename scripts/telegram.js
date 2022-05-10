@@ -1,3 +1,4 @@
+const logger = require('../components/utils/logger');
 const { parse, translate } = require('../components/articles/article');
 const { publish: publishTelegraph } = require('../components/publishers/telegraph');
 const { publish: publishTelegram } = require('../components/publishers/telegram');
@@ -16,6 +17,8 @@ const telegram = async () => {
     await publishTelegram(article);
 
     saveDate(new Date(article.datePublished));
+
+    logger.info(JSON.stringify(article));
   }
 };
 
