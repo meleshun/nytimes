@@ -4,14 +4,26 @@ const { get: lastDate } = require('../utils/date');
 
 const getLink = () => `https://www.nytimes.com/live/${new Date().toLocaleDateString('en-ZA')}/world/ukraine-russia-war-news`;
 
-const parseArticles = async (HTMLElement) => {
-  const json = JSON.parse(HTMLElement.querySelectorAll('script[type="application/ld+json"]')[2].text);
+const getJson = (HTMLElement) => {
+  const elements = HTMLElement.querySelectorAll('script[type="application/ld+json"]');
+  for (let i = 0; i < elements.length; i++) {
+    const element = elements[i];
+    const json = JSON.parse(element.text);
+    if (json.liveBlogUpdate) {
+      return json.liveBlogUpdate;
+    }
+  }
+  return undefined;
+};
 
-  if (!json.liveBlogUpdate) {
+const parseArticles = async (HTMLElement) => {
+  const json = getJson(HTMLElement);
+
+  if (!json) {
     throw new Error('liveBlogUpdate key not found');
   }
 
-  return json.liveBlogUpdate.map((article) => {
+  return json.map((article) => {
     const articleElement = HTMLElement.querySelector(`#${article.url.split('#')[1]}`).parentNode;
     return {
       title: articleElement.querySelector('h2')?.text,

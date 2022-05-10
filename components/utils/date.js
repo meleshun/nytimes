@@ -1,7 +1,7 @@
 const path = require('path');
 const { readFileSync, writeFileSync } = require('fs');
 
-const filePath = path.join(__dirname, '../../tmp/date');
+const filePath = path.join(__dirname, `../../tmp/date-${process.env.TRANSLATE_TO}`);
 
 let lastDate = (() => {
   try {

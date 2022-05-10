@@ -7,8 +7,8 @@ const logger = createLogger({
   format: format.combine(
     format.timestamp(),
     format.printf(({
-      level, message, timestamp,
-    }) => `${timestamp} [${level}] ${message}`),
+      message, timestamp,
+    }) => `${timestamp} [${process.env.TRANSLATE_TO}] ${message}`),
   ),
   transports: [
     new transports.File({

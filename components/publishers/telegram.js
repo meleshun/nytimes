@@ -13,7 +13,7 @@ const publish = async (article) => {
         title: article.title,
         description: (article.title ? article.description.slice(0, 2) : article.description).join('\n\n'),
         more: {
-          text: 'Детальніше',
+          text: process.env.BUTTON_MORE_TEXT,
           link: article.url,
         },
         subscribe: {
