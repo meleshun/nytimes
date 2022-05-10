@@ -8,7 +8,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 if (process.env.NODE_ENV === 'production') {
-  cron.schedule('*/5 * * * *', () => {
+  cron.schedule(`*/${process.env.UPDATE_FREQUENCY} * * * *`, () => {
     telegram().catch((e) => {
       logger.error(e);
     });
