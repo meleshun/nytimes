@@ -2,7 +2,7 @@ const axios = require('axios').default;
 const { parse } = require('node-html-parser');
 const { get: lastDate } = require('../utils/date');
 
-const getLink = () => `https://www.nytimes.com/live/${new Date().toLocaleDateString('en-ZA')}/world/ukraine-russia-war-news`;
+const getLink = () => `https://www.nytimes.com/live/${new Date().toLocaleDateString('en-ZA')}/world/russia-ukraine-war-news`;
 
 const getJson = (HTMLElement) => {
   const elements = HTMLElement.querySelectorAll('script[type="application/ld+json"]');
@@ -46,7 +46,11 @@ const getArticles = async () => axios
   })
   .then((response) => response.data)
   .then(parse)
-  .then(parseArticles);
+  .then(parseArticles)
+  .catch((e) => {
+    e.name = 'NYTimes';
+    throw new Error(e);
+  });
 
 const getUpdates = async () => getArticles()
   .then((articles) => articles.filter((article) => new Date(article.datePublished) > lastDate()));
