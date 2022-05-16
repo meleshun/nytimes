@@ -23,16 +23,15 @@ const parseArticles = async (HTMLElement) => {
     throw new Error('liveBlogUpdate key not found');
   }
 
-  return json.map((article) => {
-    const articleElement = HTMLElement.querySelector(`#${article.url.split('#')[1]}`).parentNode;
-    return {
-      title: articleElement.querySelector('h2')?.text,
-      description: articleElement.querySelectorAll('p.evys1bk0').map((desc) => desc.text),
-      image: article.image[0].url,
-      datePublished: article.datePublished,
-      dateModified: article.dateModified,
-    };
-  }).slice(1).reverse();
+  const discriptions = HTMLElement.querySelectorAll('[role="article"]').map((articleElement) => articleElement.querySelectorAll('p.evys1bk0').map((desc) => desc.text.replace(/\s+/g, ' ')));
+
+  return json.map((article) => ({
+    title: article.headline.length !== 110 ? article.headline : undefined,
+    description: discriptions.find((desc) => article.articleBody.startsWith(desc[0]?.slice(0, 80))),
+    image: article.image[0].url,
+    datePublished: article.datePublished,
+    dateModified: article.dateModified,
+  })).filter((article) => article.description).slice(1).reverse();
 };
 
 const getArticles = async () => axios
